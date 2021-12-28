@@ -1,0 +1,72 @@
+---
+title: "Repducible Research, week 1"
+author: "Radsaur"
+date: "24 12 2021"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Packages
+In order to speed up our statistical analysis we import the following packages
+
+
+<http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r results='asis', cars}
+
+library(xtable)
+options(xtable.floating = FALSE)
+options(xtable.timestamp = "")
+
+fit<-lm(speed~.,cars)
+xt<-xtable(summary(fit))
+xt
+
+```
+
+```{r results='asis'}
+data(tli)
+xtable(tli[1:10, ])
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+##6. Code to describe and show a strategy for imputing missing data
+We use library MICE in order to imput missing values. This library assumes that the missing data are Missing at Random (MAR), which means that the probability that a value is missing depends only on observed value and can be predicted using them. It imputes data on a variable by variable basis by specifying an imputation model per variable.
+
+*For example:* Suppose we have X1, X2….Xk variables. If X1 has missing values, then it will be regressed on other variables X2 to Xk. The missing values in X1 will be then replaced by predictive values obtained. Similarly, if X2 has missing values, then X1, X3 to Xk variables will be used in prediction model as independent variables. Later, missing values will be replaced with predicted values.
+
+We are going to use linear regression  to predict continuous missing values in "Step". 
+```{r}
+library(mice)
+
+imputed_Data <- mice(df, maxit = 10, method = 'pmm', seed = 500,printFlag = F)
+imputed_Data$imp$steps
+completeData <- complete(imputed_Data,2)
+
+
+```
+
+The missing valies are now implied. Thus, we can re-do our histogram of the total number of steps taken each day. This time the histogram is going to use the implied values instead of the NAs. 
+
+```{r}
+
+```
+
